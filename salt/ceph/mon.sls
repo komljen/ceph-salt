@@ -3,6 +3,7 @@
 {% set cluster = salt['grains.get']('environment','ceph') %}
 {% set host = salt['config.get']('host') %}
 {% set ip = salt['config.get']('fqdn_ip4') %}
+{% set fsid = salt['pillar.get']('ceph:global:fsid') %}
 {% set keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' %}
 {% set secret = '/tmp/' + cluster + '.mon.keyring' %}
 {% set monmap = '/tmp/' + cluster + 'monmap' %}
@@ -30,6 +31,31 @@ include:
     - require:
       - pkg: ceph
 
+{{ keyring }}:
+  cmd.run:
+    - name: echo "Keyring doesn't exists"
+    - unless: test -f {{ keyring }}
+
+{% for mon in mons %}
+cp.get_file {{mon}}{{ keyring }}:
+  module.wait:
+    - name: cp.get_file
+    - path: salt://{{ mon }}/files{{ keyring }}
+    - dest: {{ keyring }}
+    - watch:
+      - cmd: {{ keyring }}
+{% endfor %}
+
+get_mon_secret:
+  cmd.run:
+    - name: ceph auth get mon. -o {{ secret }}
+    - onlyif: test -f {{ keyring }}
+
+get_mon_map:
+  cmd.run:
+    - name: ceph mon getmap -o {{ monmap }}
+    - onlyif: test -f {{ keyring }}
+
 gen_mon_secret:
   cmd.run:
     - name: ceph-authtool --create-keyring {{ secret }} --gen-key -n mon. --cap mon 'allow *'
@@ -53,13 +79,15 @@ cp.push {{ keyring }}:
     - name: cp.push
     - path: {{ keyring }}
     - watch:
-      - cmd: gen_mon_secret
+      - cmd: import_keyring
 
-{% for mon in mons %}
-cp.get_file {{mon}}{{ keyring }}:
-  module.run:
-    - name: cp.get_file
-    - path: salt://{{ mon }}{{ keyring }}
-    - dest: {{ keyring }}
-{% endfor %}
+gen_mon_map:
+  cmd.wait:
+    - name: monmaptool --create --add {{ host }} {{ ip }} --fsid {{ fsid }} {{ monmap }}
+    - watch:
+      - module: cp.push {{ keyring }}
+
+populate_mon:
+  cmd.wait:
+    - name: ceph-mon --mkfs -i {{ host }} --monmap {{ monmap }} --keyring {{ secret }}
 

@@ -1,7 +1,8 @@
 ceph:
   global:
+    fsid: 294bc494-81ba-4c3c-ac5d-af7b3442a2a5
     public_network: "172.31.37.0/24"
-    cluste_network: "172.31.36.0/24"
+    cluster_network: "172.31.36.0/24"
   client:
     rbd_cache: true
     rbd_cache_size: 134217728
