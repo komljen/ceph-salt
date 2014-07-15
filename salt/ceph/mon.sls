@@ -2,7 +2,7 @@
 
 {% set cluster = salt['grains.get']('environment','ceph') %}
 {% set host = salt['config.get']('host') %}
-{% set ip = salt['config.get']('fqdn_ip4') %}
+{% set ip = salt['network.interfaces']()['eth0']['inet'][0]['address'] %}
 {% set fsid = salt['pillar.get']('ceph:global:fsid') %}
 {% set keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' %}
 {% set secret = '/tmp/' + cluster + '.mon.keyring' %}
@@ -50,11 +50,13 @@ get_mon_secret:
   cmd.run:
     - name: ceph auth get mon. -o {{ secret }}
     - onlyif: test -f {{ keyring }}
+    - timeout: 5
 
 get_mon_map:
   cmd.run:
     - name: ceph mon getmap -o {{ monmap }}
     - onlyif: test -f {{ keyring }}
+    - timeout: 5
 
 gen_mon_secret:
   cmd.run:
