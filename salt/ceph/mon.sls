@@ -40,13 +40,15 @@ cp.get_file {{mon}}{{ keyring }}:
 get_mon_secret:
   cmd.run:
     - name: ceph auth get mon. -o {{ secret }}
-    - unless: test -f {{ secret }} || test -f {{ keyring }}
+    - onlyif: test -f {{ keyring }}
+    - unless: test -f {{ secret }}
     - timeout: 5
 
 get_mon_map:
   cmd.run:
     - name: ceph mon getmap -o {{ monmap }}
-    - unless: test -f {{ monmap }} || test -f {{ keyring }}
+    - onlyif: test -f {{ keyring }}
+    - unless: test -f {{ monmap }}
     - timeout: 5
 
 gen_mon_secret:
