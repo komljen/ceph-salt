@@ -1,42 +1,32 @@
 # vi: set ft=yaml.jinja :
 
-{% set cluster = salt['grains.get']('environment','ceph') %}
-{% set host = salt['config.get']('host') %}
-{% set ip = salt['network.interfaces']()['eth0']['inet'][0]['address'] %}
-{% set fsid = salt['pillar.get']('ceph:global:fsid') %}
-{% set keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' %}
-{% set secret = '/tmp/' + cluster + '.mon.keyring' %}
-{% set monmap = '/tmp/' + cluster + 'monmap' %}
-{% set nodes = salt['pillar.get']('nodes').iterkeys() %}
-{% set mons = [] %}
+{% set cluster = salt['grains.get']('environment','ceph') -%}
+{% set host = salt['config.get']('host') -%}
+{% set ip = salt['network.interfaces']()['eth0']['inet'][0]['address'] -%}
+{% set fsid = salt['pillar.get']('ceph:global:fsid') -%}
+{% set keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' -%}
+{% set secret = '/tmp/' + cluster + '.mon.keyring' -%}
+{% set monmap = '/tmp/' + cluster + 'monmap' -%}
+{% set nodes = salt['pillar.get']('nodes').iterkeys() -%}
+{% set mons = [] -%}
 
-{% for node in nodes %}
-
-{% set is_mon = salt['pillar.get']('nodes:' + node + ':mon') %}
-
-{% if is_mon == true %}
+{% for node in nodes -%}
+{% set is_mon = salt['pillar.get']('nodes:' + node + ':mon') -%}
+{% if is_mon == true -%}
 {% do mons.append(node) -%}
-{% endif %}
-
-{% endfor %}
+{% endif -%}
+{% endfor -%}
 
 include:
   - .ceph
-
-/var/lib/ceph/mon/{{ cluster }}-{{ host }}:
-  file.directory:
-    - user: root
-    - group: root
-    - mode: '0644'
-    - require:
-      - pkg: ceph
 
 {{ keyring }}:
   cmd.run:
     - name: echo "Keyring doesn't exists"
     - unless: test -f {{ keyring }}
 
-{% for mon in mons %}
+{% for mon in mons -%}
+
 cp.get_file {{mon}}{{ keyring }}:
   module.wait:
     - name: cp.get_file
@@ -44,18 +34,19 @@ cp.get_file {{mon}}{{ keyring }}:
     - dest: {{ keyring }}
     - watch:
       - cmd: {{ keyring }}
-{% endfor %}
+
+{% endfor -%}
 
 get_mon_secret:
   cmd.run:
     - name: ceph auth get mon. -o {{ secret }}
-    - onlyif: test -f {{ keyring }}
+    - unless: test -f {{ secret }}
     - timeout: 5
 
 get_mon_map:
   cmd.run:
     - name: ceph mon getmap -o {{ monmap }}
-    - onlyif: test -f {{ keyring }}
+    - unless: test -f {{ monmap }}
     - timeout: 5
 
 gen_mon_secret:
@@ -86,10 +77,26 @@ cp.push {{ keyring }}:
 gen_mon_map:
   cmd.wait:
     - name: monmaptool --create --add {{ host }} {{ ip }} --fsid {{ fsid }} {{ monmap }}
+    - unless: test -f {{ monmap }}
     - watch:
       - module: cp.push {{ keyring }}
 
 populate_mon:
   cmd.wait:
     - name: ceph-mon --mkfs -i {{ host }} --monmap {{ monmap }} --keyring {{ secret }}
+    - watch:
+      - cmd: gen_mon_map
+
+start_mon:
+  cmd.run:
+    - name: start ceph-mon id={{ host }}
+    - require:
+      - cmd: populate_mon
+
+add_mon:
+  cmd.wait:
+    - name: ceph mon add {{ host }} {{ ip }}
+    - timeout: 5
+    - watch:
+      - cmd: start_mon
 

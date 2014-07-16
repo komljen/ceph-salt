@@ -1,8 +1,12 @@
+mine_functions:
+  network.ip_addrs:
+    cidr: 10.0.2.0/24
+
 ceph:
   global:
     fsid: 294bc494-81ba-4c3c-ac5d-af7b3442a2a5
-    public_network: "172.31.37.0/24"
-    cluster_network: "172.31.36.0/24"
+    public_network: 10.0.2.0/24
+    cluster_network: 10.0.2.0/24
   client:
     rbd_cache: true
     rbd_cache_size: 134217728

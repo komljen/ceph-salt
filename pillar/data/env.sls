@@ -3,21 +3,14 @@ nodes:
     devs:
       sdb:
         journal: sdf
+        osd: 0
       sdc:
         journal: sdf
+        osd: 1
       sdd:
         journal: sdg
+        osd: 2
       sde:
         journal: sdg
-    mon: true
-  ceph-node02:
-    devs:
-      sdb:
-        journal: sdf
-      sdc:
-        journal: sdf
-      sdd:
-        journal: sdg
-      sde:
-        journal: sdg
+        osd: 3
     mon: true
