@@ -5,8 +5,8 @@
 {% set ip = salt['network.interfaces']()['eth0']['inet'][0]['address'] -%}
 {% set fsid = salt['pillar.get']('ceph:global:fsid') -%}
 {% set keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' -%}
-{% set secret = '/tmp/' + cluster + '.mon.keyring' -%}
-{% set monmap = '/tmp/' + cluster + 'monmap' -%}
+{% set secret = '/var/lib/ceph/tmp/' + cluster + '.mon.keyring' -%}
+{% set monmap = '/var/lib/ceph/tmp/' + cluster + 'monmap' -%}
 {% set nodes = salt['pillar.get']('nodes').iterkeys() -%}
 {% set mons = [] -%}
 
@@ -40,13 +40,13 @@ cp.get_file {{mon}}{{ keyring }}:
 get_mon_secret:
   cmd.run:
     - name: ceph auth get mon. -o {{ secret }}
-    - unless: test -f {{ secret }}
+    - unless: test -f {{ secret }} || test -f {{ keyring }}
     - timeout: 5
 
 get_mon_map:
   cmd.run:
     - name: ceph mon getmap -o {{ monmap }}
-    - unless: test -f {{ monmap }}
+    - unless: test -f {{ monmap }} || test -f {{ keyring }}
     - timeout: 5
 
 gen_mon_secret:
@@ -90,6 +90,7 @@ populate_mon:
 start_mon:
   cmd.run:
     - name: start ceph-mon id={{ host }}
+    - unless: status ceph-mon id={{ host }}
     - require:
       - cmd: populate_mon
 
