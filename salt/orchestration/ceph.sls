@@ -14,7 +14,7 @@ first_mon_setup:
 
 mon_setup:
   salt.state:
-    - tgt: 'role:ceph-mon'
+    - tgt: 'roles:ceph-mon'
     - tgt_type: grain
     - sls: ceph.mon
     - require:
@@ -22,7 +22,7 @@ mon_setup:
 
 osd_setup:
   salt.state:
-    - tgt: 'role:ceph-osd'
+    - tgt: 'roles:ceph-osd'
     - tgt_type: grain
     - sls: ceph.osd
     - require:
