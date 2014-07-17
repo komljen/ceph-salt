@@ -1,12 +1,13 @@
 # vi: set ft=yaml.jinja :
 
 {% set cluster = salt['grains.get']('environment','ceph') -%}
-{% set host = salt['config.get']('host') -%}
 {% set fsid = salt['pillar.get']('ceph:global:fsid') -%}
-{% set keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' -%}
+{% set host = salt['config.get']('host') -%}
+{% set bootstrap_osd_keyring = '/var/lib/ceph/bootstrap-osd/' + cluster + '.keyring' -%}
+{% set keyring = '/var/lib/ceph/bootstrap-osd/' + cluster + '.keyring' -%}
 {% set mons = [] -%}
 
-{% set host = salt['config.get']('host') -%}
+{% for node in salt['pillar.get']('nodes').iterkeys() -%}
 {% set is_mon = salt['pillar.get']('nodes:' + node + ':mon') -%}
 {% if is_mon == true -%}
 {% do mons.append(node) -%}
@@ -16,59 +17,83 @@
 include:
   - .ceph
 
-{{ keyring }}:
+{{ bootstrap_osd_keyring }}:
   cmd.run:
-    - name: echo "Keyring doesn't exists"
-    - unless: test -f {{ keyring }}
+    - name: echo "Bootstrap OSD keyring doesn't exists"
+    - unless: test -f {{ bootstrap_osd_keyring }}
 
 {% for mon in mons -%}
 
-cp.get_file {{mon}}{{ keyring }}:
+cp.get_file {{mon}}{{ bootstrap_osd_keyring }}:
   module.wait:
     - name: cp.get_file
-    - path: salt://{{ mon }}/files{{ keyring }}
-    - dest: {{ keyring }}
+    - path: salt://{{ mon }}/files{{ bootstrap_osd_keyring }}
+    - dest: {{ bootstrap_osd_keyring }}
     - watch:
-      - cmd: {{ keyring }}
+      - cmd: {{ bootstrap_osd_keyring }}
 
 {% endfor -%}
 
-add_to_crush:
-  run.cmd:
-    - name: ceph osd crush add-bucket {{ host }} host
+#add_to_crush:
+#  cmd.run:
+#    - name: ceph osd crush add-bucket {{ host }} host
+#    - onlyif: test -f {{ keyring }}
+#    - unless: ceph osd tree | grep {{ host }}
 
-place_root_default:
-  run.cmd:
-    - name: ceph osd crush move {{ host }} root=default
+#place_root_default:
+#  cmd.wait:
+#    - name: ceph osd crush move {{ host }} root=default
+#    - watch:
+#      - cmd: add_to_crush
 
 {% for dev in salt['pillar.get']('nodes:' + host + ':devs') -%}
 {% set osd = salt['pillar.get']('nodes:' + host + ':devs:' + dev + ':osd') -%}
 {% set journal = salt['pillar.get']('nodes:' + host + ':devs:' + dev + ':journal') -%}
+{% if dev -%}
 
-create_osd:
+disk_prepare {{ dev }}:
   cmd.run:
-    - name: ceph osd create
+    - name: ceph-disk prepare --cluster {{ cluster }} --cluster-uuid {{ fsid }} --fs-type xfs /dev/{{ dev }} /dev/{{ journal }}
+    - unless: parted --script /dev/{{ dev }} print | egrep  -sq '^ 1.*ceph'
 
-populate_osd:
+disk_activate {{ dev }}:
   cmd.wait:
-    - name: ceph-osd -i {{ osd }} --mkfs --mkkey
+    - name: ceph-disk activate /dev/{{ dev }}
+    - onlyif: test -f {{ bootstrap_osd_keyring }}
+    - timeout: 10
     - watch:
-      - cmd: create_osd
+      - cmd: disk_prepare {{ dev }}
 
-register_osd:
-  cmd.run:
-    -name: ceph auth add osd.{{ osd }} osd 'allow *' mon 'allow rwx' -i /var/lib/ceph/osd/ceph-{{ osd }}/keyring
+#create_osd {{ osd }}:
+#  cmd.run:
+#    - name: ceph osd create
+#    - unless: ceph osd ls | grep {{ osd }}
 
-add_osd_crush:
-  cmd.run:
-    - name: ceph osd crush add osd.{{ osd }} 1.0 host={{ host }}
+#populate_osd {{ osd }}:
+#  cmd.wait:
+#    - name: ceph-osd -i {{ osd }} --mkfs --mkkey
+#    - watch:
+#      - cmd: create_osd {{ osd }}
 
-start_osd:
-  cmd.run:
-    - name: start ceph-osd id={{ osd }}
-    - unless: status ceph-osd id={{ osd }}
-    - require:
-      - cmd: populate_osd
+#register_osd {{ osd }}:
+#  cmd.wait:
+#    - name: ceph auth add osd.{{ osd }} osd 'allow *' mon 'allow rwx' -i /var/lib/ceph/osd/{{ cluster }}-{{ osd }}/keyring
+#    - watch:
+#      - cmd: populate_osd {{ osd }}
 
+#add_osd_crush {{ osd }}:
+#  cmd.wait:
+#    - name: ceph osd crush add osd.{{ osd }} 1.0 host={{ host }}
+#    - watch:
+#      - cmd: register_osd {{ osd }}
+
+#start_osd {{ osd }}:
+#  cmd.run:
+#    - name: start ceph-osd id={{ osd }}
+#    - unless: status ceph-osd id={{ osd }}
+#    - require:
+#      - cmd: register_osd {{ osd }}
+
+{% endif -%}
 {% endfor -%}
 
