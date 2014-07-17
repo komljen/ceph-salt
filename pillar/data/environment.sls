@@ -5,14 +5,8 @@ nodes:
       - ceph-mon
     devs:
       sdb:
-        journal: sdf
+        journal: sdd
         osd: 0
       sdc:
-        journal: sdf
+        journal: sdd
         osd: 1
-      sdd:
-        journal: sdg
-        osd: 2
-      sde:
-        journal: sdg
-        osd: 3
