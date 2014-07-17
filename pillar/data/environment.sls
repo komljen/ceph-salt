@@ -6,7 +6,5 @@ nodes:
     devs:
       sdb:
         journal: sdd
-        osd: 0
       sdc:
         journal: sdd
-        osd: 1
