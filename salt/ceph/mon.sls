@@ -8,15 +8,6 @@
 {% set bootstrap_osd_keyring = '/var/lib/ceph/bootstrap-osd/' + cluster + '.keyring' -%}
 {% set secret = '/var/lib/ceph/tmp/' + cluster + '.mon.keyring' -%}
 {% set monmap = '/var/lib/ceph/tmp/' + cluster + 'monmap' -%}
-{% set nodes = salt['pillar.get']('nodes').iterkeys() -%}
-{% set mons = [] -%}
-
-{% for node in nodes -%}
-{% set is_mon = salt['pillar.get']('nodes:' + node + ':mon') -%}
-{% if is_mon == true -%}
-{% do mons.append(node) -%}
-{% endif -%}
-{% endfor -%}
 
 include:
   - .ceph
@@ -26,7 +17,7 @@ include:
     - name: echo "Keyring doesn't exists"
     - unless: test -f {{ admin_keyring }}
 
-{% for mon in mons -%}
+{% for mon in salt['mine.get']('roles:ceph-mon','network.ip_addrs','grain' ) -%}
 
 cp.get_file {{mon}}{{ admin_keyring }}:
   module.wait:

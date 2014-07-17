@@ -5,14 +5,6 @@
 {% set host = salt['config.get']('host') -%}
 {% set bootstrap_osd_keyring = '/var/lib/ceph/bootstrap-osd/' + cluster + '.keyring' -%}
 {% set keyring = '/var/lib/ceph/bootstrap-osd/' + cluster + '.keyring' -%}
-{% set mons = [] -%}
-
-{% for node in salt['pillar.get']('nodes').iterkeys() -%}
-{% set is_mon = salt['pillar.get']('nodes:' + node + ':mon') -%}
-{% if is_mon == true -%}
-{% do mons.append(node) -%}
-{% endif -%}
-{% endfor -%}
 
 include:
   - .ceph
@@ -22,7 +14,7 @@ include:
     - name: echo "Bootstrap OSD keyring doesn't exists"
     - unless: test -f {{ bootstrap_osd_keyring }}
 
-{% for mon in mons -%}
+{% for mon in salt['mine.get']('roles:ceph-mon','network.ip_addrs','grain' ) -%}
 
 cp.get_file {{mon}}{{ bootstrap_osd_keyring }}:
   module.wait:

@@ -1,0 +1,11 @@
+# vi: set ft=yaml.jinja :
+
+{% set host = salt['config.get']('host') -%}
+{% set roles = salt['pillar.get']('nodes:' + host + ':roles') -%}
+
+{% if roles -%}
+roles:
+  {% for role in roles -%}
+  - {{ role }}
+  {% endfor -%}
+{% endif -%}

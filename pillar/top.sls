@@ -3,4 +3,4 @@
 base:
   '*':
     - data.ceph
-    - data.env
+    - data.environment

@@ -1,9 +1,16 @@
 # vi: set ft=yaml.jinja :
 
+assign_roles:
+  salt.state:
+    - tgt: '*'
+    - sls: common.salt-minion
+
 first_mon_setup:
   salt.state:
     - tgt: 'vagrant-ubuntu-trusty-64*'
     - sls: ceph.mon
+    - require:
+      - salt: assign_roles
 
 mon_setup:
   salt.state:
