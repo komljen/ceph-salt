@@ -1,0 +1,5 @@
+file_recv: True
+file_roots:
+  base:
+    - /srv/salt
+    - /var/cache/salt/master/minions
