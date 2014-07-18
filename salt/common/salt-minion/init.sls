@@ -15,3 +15,8 @@ salt-minion:
     - require:
       - pkg: salt-minion
 
+mine_update:
+  module.wait:
+    - name: mine.update
+    - watch:
+      - service: salt-minion

@@ -94,9 +94,7 @@ start_mon:
       - cmd: populate_mon
 
 add_mon:
-  cmd.wait:
+  cmd.run:
     - name: ceph mon add {{ host }} {{ ip }}
-    - timeout: 5
-    - watch:
-      - cmd: start_mon
-
+    - onlyif: status ceph-mon id={{ host }}
+    - unless: ceph mon dump | grep {{ host }}

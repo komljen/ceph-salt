@@ -36,12 +36,11 @@ disk_prepare {{ dev }}:
     - unless: parted --script /dev/{{ dev }} print | grep 'ceph data'
 
 disk_activate {{ dev }}1:
-  cmd.wait:
+  cmd.run:
     - name: ceph-disk activate /dev/{{ dev }}1
     - onlyif: test -f {{ bootstrap_osd_keyring }}
+    - unless: ceph-disk list | egrep "/dev/{{ dev }}1.*active"
     - timeout: 10
-    - watch:
-      - cmd: disk_prepare {{ dev }}
 
 {% endif -%}
 {% endfor -%}
