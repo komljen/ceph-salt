@@ -1,8 +1,8 @@
 ceph:
   global:
     fsid: 294bc494-81ba-4c3c-ac5d-af7b3442a2a5
-    public_network: 10.0.2.0/24
-    cluster_network: 10.0.2.0/24
+    public_network: 192.168.33.0/24
+    cluster_network: 192.168.33.0/24
   client:
     rbd_cache: true
     rbd_cache_size: 134217728
@@ -17,5 +17,5 @@ ceph:
     filestore_split_multiple: 8
     op_threads: 8
   custom:
-    mon_interface: eth0
+    mon_interface: eth1
 

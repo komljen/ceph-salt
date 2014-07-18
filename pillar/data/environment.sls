@@ -1,10 +1,15 @@
 nodes:
-  vagrant-ubuntu-trusty-64:
+  minion01:
     roles:
       - ceph-osd
       - ceph-mon
     devs:
       sdb:
-        journal: sdd
-      sdc:
-        journal: sdd
+        journal: sdc
+  minion02:
+    roles:
+      - ceph-osd
+      - ceph-mon
+    devs:
+      sdb:
+        journal: sdc
