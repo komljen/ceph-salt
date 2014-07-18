@@ -17,7 +17,7 @@ include:
     - name: echo "Keyring doesn't exists"
     - unless: test -f {{ admin_keyring }}
 
-{% for mon in salt['mine.get']('roles:ceph-mon','network.ip_addrs','grain' ) -%}
+{% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain' ) -%}
 
 cp.get_file {{mon}}{{ admin_keyring }}:
   module.wait:

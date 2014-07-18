@@ -14,7 +14,7 @@ include:
     - name: echo "Bootstrap OSD keyring doesn't exists"
     - unless: test -f {{ bootstrap_osd_keyring }}
 
-{% for mon in salt['mine.get']('roles:ceph-mon','network.ip_addrs','grain' ) -%}
+{% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain' ) -%}
 
 cp.get_file {{mon}}{{ bootstrap_osd_keyring }}:
   module.wait:

@@ -2,5 +2,6 @@
 
 base:
   '*':
-    - data.ceph
     - data.environment
+    - data.mine
+    - data.ceph
