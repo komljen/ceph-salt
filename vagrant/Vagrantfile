@@ -21,8 +21,8 @@ Vagrant.configure("2") do |config|
   end
 
   # Salt minion01
-  config.vm.define "minion01" do |node|
-    node.vm.hostname = "minion01"
+  config.vm.define "ceph-node01" do |node|
+    node.vm.hostname = "ceph-node01"
     node.vm.network :private_network, ip: "192.168.33.20"
 
     # salt-minion provisioning
@@ -32,8 +32,8 @@ Vagrant.configure("2") do |config|
   end
 
   # Salt minion02
-  config.vm.define "minion02" do |node|
-    node.vm.hostname = "minion02"
+  config.vm.define "ceph-node02" do |node|
+    node.vm.hostname = "ceph-node02"
     node.vm.network :private_network, ip: "192.168.33.30"
 
     # salt-minion provisioning

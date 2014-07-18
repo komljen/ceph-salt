@@ -27,8 +27,8 @@ cp.get_file {{mon}}{{ bootstrap_osd_keyring }}:
 {% endfor -%}
 
 {% for dev in salt['pillar.get']('nodes:' + host + ':devs') -%}
-{% set journal = salt['pillar.get']('nodes:' + host + ':devs:' + dev + ':journal') -%}
 {% if dev -%}
+{% set journal = salt['pillar.get']('nodes:' + host + ':devs:' + dev + ':journal') -%}
 
 disk_prepare {{ dev }}:
   cmd.run:

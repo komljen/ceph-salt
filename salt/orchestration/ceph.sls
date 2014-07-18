@@ -7,7 +7,7 @@ assign_roles:
 
 first_mon_setup:
   salt.state:
-    - tgt: 'minion01*'
+    - tgt: 'ceph-node01*'
     - sls: ceph.mon
     - require:
       - salt: assign_roles
