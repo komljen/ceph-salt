@@ -7,7 +7,7 @@ Tested on Ubuntu 14.04 with Ceph Firefly release.
 Prepare your environment
 ==============
 
-First you need salt master and minions installed and running. On the master node you need to include additional options defined in configs/master file:
+First you need Salt master and minions installed and running on all nodes. On the master node you need to include additional options defined in configs/master file:
 
     file_recv: True
     file_roots:
@@ -15,7 +15,7 @@ First you need salt master and minions installed and running. On the master node
         - /srv/salt
         - /var/cache/salt/master/minions
 
-Those changes will add option for minions to send files to the master and other minions to be able to get those files. Restart your salt master and clone my git repository:
+Those options will make sure that minions can send files to the master and other minions to be able to get those files. Restart the Salt master node and clone my git repository:
 
     rm -rf /srv/salt /srv/pillar
     cd /srv && git clone https://github.com/komljen/salt-ceph.git .
@@ -23,15 +23,22 @@ Those changes will add option for minions to send files to the master and other 
 Then edit pillar/data/environment.sls to match with your environment:
 
     nodes:
-      vagrant-ubuntu-trusty-64:
+      ceph-node01:
         roles:
           - ceph-osd
           - ceph-mon
         devs:
           sdb:
-            journal: sdd
-          sdc:
-            journal: sdd
+            journal: sdc
+      ceph-node02:
+        roles:
+          - ceph-osd
+          - ceph-mon
+        devs:
+          sdb:
+            journal: sdc
+
+Now your environment is ready for Ceph deployment.
 
 Deployment
 ==============
