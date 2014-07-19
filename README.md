@@ -4,6 +4,24 @@ Deploy Ceph cluster with SaltStack
 Salt states for Ceph cluster deployment. Currently only Ceph MONs and OSDs are supported.
 Tested on Ubuntu 14.04 with Ceph Firefly release.
 
+Test environment with Vagrant
+==============
+
+If you want to test this deployment on your local machine inside VMs, the easiest way is to use Vagrant with VirtualBox provider. All you need is to go inside vagrant directory and run:
+
+    vagrant up
+
+This will bring up 3 VMs, one master and 2 minion nodes. After VMs are up and running, login to master node and accept minion keys:
+
+    vagrant ssh master
+    sudo salt-key -A
+
+Test the connectivity between master and minions:
+
+    sudo salt '*' test.ping
+    
+If everything is OK you can proceed with Ceph deployment step (https://github.com/komljen/salt-ceph#deployment).
+
 Prepare your environment
 ==============
 
