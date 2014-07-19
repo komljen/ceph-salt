@@ -43,8 +43,8 @@ Now your environment is ready for Ceph deployment.
 Deployment
 ==============
 
-To start Ceph cluster deployment run orchestrate state:
+To start Ceph cluster deployment run orchestrate state from Salt master:
 
     salt-run state.orchestrate orchestration.ceph
     
-It will take few minutes and after that you can check your cluster status.
+It will take few minutes to complete.
