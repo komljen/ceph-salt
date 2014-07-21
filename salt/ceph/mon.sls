@@ -35,14 +35,12 @@ get_mon_secret:
     - name: ceph auth get mon. -o {{ secret }}
     - onlyif: test -f {{ admin_keyring }}
     - unless: test -f {{ secret }}
-    - timeout: 5
 
 get_mon_map:
   cmd.run:
     - name: ceph mon getmap -o {{ monmap }}
     - onlyif: test -f {{ admin_keyring }}
     - unless: test -f {{ monmap }}
-    - timeout: 5
 
 gen_mon_secret:
   cmd.run:
@@ -81,15 +79,21 @@ populate_mon:
 
 start_mon:
   cmd.run:
-    - name: start ceph-mon id={{ host }} && sleep 2
+    - name: start ceph-mon id={{ host }}
     - unless: status ceph-mon id={{ host }}
     - require:
       - cmd: populate_mon
+
+osd_keyring_wait:
+  cmd.wait:
+    - name: while ! test -f {{ bootstrap_osd_keyring }}; do sleep 1; done
+    - timeout: 10
+    - watch:
+      - cmd: start_mon
 
 cp.push {{ bootstrap_osd_keyring }}:
   module.wait:
     - name: cp.push
     - path: {{ bootstrap_osd_keyring }}
     - watch:
-      - cmd: start_mon
-
+      - cmd: osd_keyring_wait
