@@ -11,7 +11,7 @@ include:
 
 {{ bootstrap_osd_keyring }}:
   cmd.run:
-    - name: echo "Bootstrap OSD keyring doesn't exists"
+    - name: echo "Getting bootstrap OSD keyring"
     - unless: test -f {{ bootstrap_osd_keyring }}
 
 {% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain' ) -%}
