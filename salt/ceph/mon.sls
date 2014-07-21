@@ -81,7 +81,7 @@ populate_mon:
 
 start_mon:
   cmd.run:
-    - name: start ceph-mon id={{ host }}
+    - name: start ceph-mon id={{ host }} && sleep 2
     - unless: status ceph-mon id={{ host }}
     - require:
       - cmd: populate_mon
