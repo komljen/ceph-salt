@@ -9,34 +9,26 @@ Test environment with Vagrant
 
 If you want to test this deployment on your local machine inside VMs, the easiest way is to use Vagrant with VirtualBox provider. All you need is to go inside vagrant directory and run:
 
-    vagrant up
+    cd vagrant && vagrant up
 
 This will bring up 3 VMs, one master and 2 minion nodes. Ceph will be deployed on two minion nodes. Also those VMs will have two additional network interfaces to emulate public and cluster network for Ceph and two additional HDDs attached to them. One will be used for OSD and one for journal. Environment description is located here: pillar/data/environment.sls
 
-Login to master node and make changes inside master configuration file (https://github.com/komljen/salt-ceph#master-node).
-
-    vagrant ssh master
-
-After salt master restart accept minion keys:
-
-    sudo su -
-    salt-key -A
-
 Test the connectivity between master and minions:
 
-    salt '*' test.ping
+    vagrant ssh master
+    sudo salt '*' test.ping
     
-If everything is OK you can proceed with Ceph deployment step (https://github.com/komljen/salt-ceph#deployment).
+If everything is OK you can proceed with Ceph deployment step: https://github.com/komljen/salt-ceph#deployment
 
 Prepare your environment
 ==============
 
-First you need Salt master and minions installed and running on all nodes.
+First you need Salt master and minions installed and running on all nodes and minions keys should be accepted.
 
 Master node
 --------------
 
-On the master node you need to include additional options defined in configs/master file. Append this to your /etc/salt/master:
+On the master node you need to include additional options. Append this to your /etc/salt/master:
 
     file_recv: True
     file_roots:
@@ -51,12 +43,15 @@ Those options will make sure that minions can send files to the master and other
 Salt states and pillars
 --------------
 
-Restart the Salt master node and clone my git repository:
+Clone this git repository:
 
     rm -rf /srv/salt /srv/pillar
     cd /srv && git clone https://github.com/komljen/salt-ceph.git .
 
-Then edit pillar/data/environment.sls to match with your environment:
+Configuration options
+--------------
+
+Environment description file with examples is located here: pillar/data/environment.sls. Edit this file to match with your environment:
 
     nodes:
       ceph-node01:
@@ -74,7 +69,36 @@ Then edit pillar/data/environment.sls to match with your environment:
           sdb:
             journal: sdc
 
-Now your environment is ready for Ceph deployment.
+Ceph configuration file will be automatically generated. Edit pillar/data/ceph.sls if you want to make additional changes:
+
+    ceph:
+      global:
+        fsid: 294bc494-81ba-4c3c-ac5d-af7b3442a2a5
+        public_network: 192.168.33.0/24
+        cluster_network: 192.168.36.0/24
+      client:
+        rbd_cache: true
+        rbd_cache_size: 134217728
+      osd:
+        journal_size: 3072
+        pool_default_size: 3
+        pool_default_min_size: 1
+        pool_default_pg_num: 1024
+        pool_default_pgp_num: 1024
+        crush_chooseleaf_type: 1
+        filestore_merge_threshold: 40
+        filestore_split_multiple: 8
+        op_threads: 8
+      custom:
+        mon_interface: eth1
+
+Take a look at those options to match with your machines:
+
+    public_network: 192.168.33.0/24
+    cluster_network: 192.168.36.0/24
+    mon_interface: eth1
+
+Proceed with deployment step after changes are done.
 
 Deployment
 ==============
