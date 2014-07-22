@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
       ["1","2"].each do |disk|
         diskname = "../../ceph-node01-#{disk}.vdi"
         v.customize ['createhd', '--filename', diskname, '--size', 4096]
-        v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+        v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
       end
     end
 
@@ -56,7 +56,7 @@ Vagrant.configure("2") do |config|
       ["1","2"].each do |disk|
         diskname = "../../ceph-node02-#{disk}.vdi"
         v.customize ['createhd', '--filename', diskname, '--size', 4096]
-        v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+        v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
       end
     end
 
