@@ -13,3 +13,19 @@ nodes:
     devs:
       sdb:
         journal: sdc
+
+# Examples:
+# MON and OSD on separate nodes.
+# Journal on same drive with OSD.
+#nodes:
+#  ceph-node01:
+#    roles:
+#      - ceph-mon
+#  ceph-node02:
+#    roles:
+#      - ceph-osd
+#    devs:
+#      sdb:
+#        journal: sdb
+#      sdc:
+#        journal: sdc
