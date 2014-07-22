@@ -1,4 +1,4 @@
-et ft=yaml.jinja :
+# vi: set ft=yaml.jinja :
 
 base:
   '*':
