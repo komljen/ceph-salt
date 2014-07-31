@@ -18,7 +18,7 @@ Test the connectivity between master and minions:
     vagrant ssh master
     sudo salt '*' test.ping
     
-If everything is OK you can proceed with Ceph deployment step: https://github.com/komljen/salt-ceph#deployment
+If everything is OK you can proceed with Ceph deployment step: https://github.com/komljen/ceph-salt#deployment
 
 Prepare your environment
 ==============
