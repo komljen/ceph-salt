@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
     # Add 2 additional 4GB drives
     node.vm.provider "virtualbox" do |v|
       ["1","2"].each do |disk|
-        diskname = "../../ceph-node01-#{disk}.vdi"
+        diskname = File.expand_path("~/ceph-node01-#{disk}.vdi")
         v.customize ['createhd', '--filename', diskname, '--size', 4096]
         v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
       end
@@ -64,7 +64,7 @@ Vagrant.configure("2") do |config|
     # Add 2 additional 4GB drives
     node.vm.provider "virtualbox" do |v|
       ["1","2"].each do |disk|
-        diskname = "../../ceph-node02-#{disk}.vdi"
+        diskname = File.expand_path("~/ceph-node02-#{disk}.vdi")
         v.customize ['createhd', '--filename', diskname, '--size', 4096]
         v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
       end
