@@ -1,0 +1,11 @@
+{% set sensu_rabbitmq = salt['mine.get']('roles:sensu-server','network.ip_addrs','grain').itervalues().next()[0] -%}
+
+{
+  "rabbitmq" : {
+    "host" : "{{ sensu_rabbitmq }}",
+    "port" : 5672,
+    "user" : "{{ salt['pillar.get']('sensu:server:rabbitmq:user') }}",
+    "password" : "{{ salt['pillar.get']('sensu:server:rabbitmq:password') }}",
+    "vhost" : "{{ salt['pillar.get']('sensu:server:rabbitmq:vhost') }}"
+  }
+}

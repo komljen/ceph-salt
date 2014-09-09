@@ -1,0 +1,13 @@
+{% set host = salt['config.get']('host') -%}
+{% set ip = salt['network.ip_addrs']('eth1')[0] -%}
+{% set subscriptions = salt['cmd.run']('ls -1d /etc/sensu/conf.d/checks-*.json'
+                                      + ' | sed -e "s#.*/checks-#\\"#"'
+                                      + ' -e "s#\.json#\\"#"'
+                                      ).split('\n') -%}
+{
+  "client" : {
+    "name" : "{{ host }}",
+    "address" : "{{ ip }}",
+    "subscriptions" : [{{ subscriptions|join(',') }}]
+  }
+}

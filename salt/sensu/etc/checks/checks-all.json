@@ -1,0 +1,61 @@
+{% set load_w1 = (salt['config.get']('num_cpus') * 2) + 1 -%}
+{% set load_w2 = load_w1 + 5 -%}
+{% set load_w3 = load_w2 + 5 -%}
+{% set load_w = load_w1 ~ ',' ~ load_w2 ~ ',' ~ load_w3 -%}
+{% set load_c1 = load_w1 * 4 -%}
+{% set load_c2 = load_c1 + 5 -%}
+{% set load_c3 = load_c2 + 5 -%}
+{% set load_c = load_c1 ~ ',' ~ load_c2 ~ ',' ~ load_c3 -%}
+
+{
+    "checks": {
+        "check-network-netstat-tcp": {
+            "command": "/etc/sensu/plugins/network/check-netstat-tcp.rb",
+            "handlers": [
+                "default"
+            ],
+            "interval": 60,
+            "standalone": true
+        },
+        "check-system-disk": {
+            "command": "/etc/sensu/plugins/system/check-disk.rb -w 80 -c 90",
+            "handlers": [
+                "default"
+            ],
+            "interval": 60,
+            "standalone": true
+        },
+        "check-system-entropy": {
+            "command": "/etc/sensu/plugins/system/check-entropy.rb",
+            "handlers": [
+                "default"
+            ],
+            "interval": 60,
+            "standalone": true
+        },
+        "check-system-load": {
+            "command": "/etc/sensu/plugins/system/check-load.rb -w {{ load_w }} -c {{ load_c }}",
+            "handlers": [
+                "default"
+            ],
+            "interval": 60,
+            "standalone": true
+        },
+        "check-system-ram": {
+            "command": "/etc/sensu/plugins/system/check-ram.rb",
+            "handlers": [
+                "default"
+            ],
+            "interval": 60,
+            "standalone": true
+        },
+        "check-system-swap-percentage": {
+            "command": "/etc/sensu/plugins/system/check-swap-percentage.sh -w 90 -c 95",
+            "handlers": [
+                "default"
+            ],
+            "interval": 60,
+            "standalone": true
+        }
+    }
+}

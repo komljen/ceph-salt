@@ -1,0 +1,10 @@
+{
+    "checks": {
+        "check-ceph-status": {
+            "command" : "/etc/sensu/plugins/ceph/check-ceph.rb",
+            "handlers" : ["default"],
+            "interval" : 60,
+            "standalone" : true
+        }
+    }
+}
