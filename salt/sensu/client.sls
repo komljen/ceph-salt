@@ -34,3 +34,5 @@ sensu-client:
     - mode: '0444'
     - require:
       - file: /etc/sensu/conf.d
+    - require_in:
+      - file: /etc/sensu/conf.d/client.json

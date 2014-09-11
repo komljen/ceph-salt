@@ -2,6 +2,7 @@
 
 base:
   '*':
-    - data.environment
-    - data.mine
+    - environment
+    - mine_functions
     - data.ceph
+    - data.sensu
