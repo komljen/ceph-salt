@@ -7,21 +7,19 @@ nodes:
     roles:
       - ceph-osd
       - ceph-mon
-      - ceph-client
+      - sensu-client
+    devs:
+      sdb:
+        journal: sdc
+  ceph-node02:
+    roles:
+      - ceph-osd
+      - ceph-mon
       - sensu-client
     devs:
       sdb:
         journal: sdc
 
-#  ceph-node02:
-#    roles:
-#      - ceph-osd
-#      - ceph-mon
-#      - sensu-client
-#    devs:
-#      sdb:
-#        journal: sdc
-#
 # Examples:
 # MON and OSD on separate nodes.
 # Journal on same drive with OSD.
