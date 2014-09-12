@@ -15,7 +15,7 @@ ceph_repo:
 {% endif -%}
 
 ceph:
-  pkg.installed
+  pkg.installed: []
 
 /etc/ceph/{{ cluster }}.conf:
   file.managed:

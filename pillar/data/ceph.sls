@@ -16,5 +16,5 @@ ceph:
     filestore_merge_threshold: 40
     filestore_split_multiple: 8
     op_threads: 8
-  custom:
-    mon_interface: eth1
+  mon:
+    interface: eth1
