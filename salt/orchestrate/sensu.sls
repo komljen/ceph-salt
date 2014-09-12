@@ -1,17 +1,10 @@
 # vi: set ft=yaml.jinja :
 
-assign_roles:
-  salt.state:
-    - tgt: '*'
-    - sls: common.salt-minion
-
 sensu_server_setup:
   salt.state:
     - tgt: 'roles:sensu-server'
     - tgt_type: grain
     - sls: sensu.server
-    - require:
-      - salt: assign_roles
 
 sensu_client_setup:
   salt.state:
