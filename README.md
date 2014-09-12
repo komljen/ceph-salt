@@ -105,11 +105,11 @@ Deployment
 
 To start Ceph cluster deployment run orchestrate state from Salt master:
 
-    salt-run state.orchestrate orchestration.ceph
+    salt-run state.orchestrate orchestrate.ceph
     
 If you want more verbosity output run same command with debug log level:
 
-    salt-run -l debug state.orchestrate orchestration.ceph
+    salt-run -l debug state.orchestrate orchestrate.ceph
 
 It will take few minutes to complete. Then you can check ceph cluster status from master:
 
