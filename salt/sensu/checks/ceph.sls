@@ -10,5 +10,8 @@ include:
     - user: sensu
     - group: sensu
     - mode: '0444'
+    - require:
+      - file: /etc/sensu/conf.d
     - watch_in:
+      - file: /etc/sensu/conf.d/client.json
       - service: sensu-client
