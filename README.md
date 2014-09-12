@@ -89,28 +89,28 @@ Ceph configuration file will be automatically generated. Edit pillar/data/ceph.s
         filestore_merge_threshold: 40
         filestore_split_multiple: 8
         op_threads: 8
-      custom:
-        mon_interface: eth1
+      mon:
+        interface: eth1
 
 Take a look at those options to match with your machines:
 
     public_network: 192.168.33.0/24
     cluster_network: 192.168.36.0/24
-    mon_interface: eth1
+    interface: eth1
 
 Proceed with deployment step after changes are done.
 
 Deployment
 ==============
 
+First you need to run highstate to add roles to minions based on environment.sls file:
+
+    salt '*' state.highstate
+
 To start Ceph cluster deployment run orchestrate state from Salt master:
 
-    salt-run state.orchestrate orchestrate.ceph
-    
-If you want more verbosity output run same command with debug log level:
-
     salt-run -l debug state.orchestrate orchestrate.ceph
-
+    
 It will take few minutes to complete. Then you can check ceph cluster status from master:
 
     salt 'ceph-node01' cmd.run 'ceph -s'
