@@ -11,7 +11,7 @@ If you want to test this deployment on your local machine inside VMs, the easies
 
     cd vagrant && vagrant up
 
-This will bring up 3 VMs, one master and 2 minion nodes. Ceph will be deployed on two minion nodes. Also those VMs will have two additional network interfaces to emulate public and cluster network for Ceph and two additional HDDs attached to them. One will be used for OSD and one for journal. Environment description is located here: pillar/data/environment.sls
+This will bring up 3 VMs, one master and 2 minion nodes. Ceph will be deployed on two minion nodes. Also those VMs will have two additional network interfaces to emulate public and cluster network for Ceph and two additional HDDs attached to them. One will be used for OSD and one for journal. Environment description is located here: pillar/environment.sls
 
 Test the connectivity between master and minions:
 
@@ -51,7 +51,7 @@ Clone this git repository:
 Configuration options
 --------------
 
-Environment description file with examples is located here: pillar/data/environment.sls. Edit this file to match with your environment:
+Environment description file with examples is located here: pillar/environment.sls. Edit this file to match with your environment:
 
     nodes:
       ceph-node01:
