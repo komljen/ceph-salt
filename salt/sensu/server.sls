@@ -10,11 +10,11 @@ include:
   - redis
   - .dashboard
 
-{% for file in 'handlers.json','rabbitmq.json','redis.json','api.json' -%}
-/etc/sensu/conf.d/{{ file }}:
+{% for file in 'handlers','rabbitmq','redis','api' -%}
+/etc/sensu/conf.d/{{ file }}.json:
   file.managed:
     - template: jinja
-    - source: salt://sensu/etc/{{ file }}
+    - source: salt://sensu/etc/{{ file }}.json
     - user: sensu
     - group: sensu
     - mode: '0444'

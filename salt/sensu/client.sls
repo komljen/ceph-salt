@@ -12,11 +12,11 @@ sensu-client:
       - file: /etc/sensu/conf.d/checks-all.json
       - file: /etc/sensu/conf.d/rabbitmq.json
 
-{% for file in 'client.json','rabbitmq.json' -%}
-/etc/sensu/conf.d/{{ file }}:
+{% for file in 'client','rabbitmq' -%}
+/etc/sensu/conf.d/{{ file }}.json:
   file.managed:
     - template: jinja
-    - source: salt://sensu/etc/{{ file }}
+    - source: salt://sensu/etc/{{ file }}.json
     - user: sensu
     - group: sensu
     - mode: '0444'

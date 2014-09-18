@@ -1,9 +1,9 @@
-{% set rabbitmq_interface = salt['pillar.get']('sensu:server:rabbitmq:interface') -%}
+{% set interface = salt['pillar.get']('sensu:server:interface') -%}
 {% set grains = salt['mine.get']('roles:sensu-server','grains.items','grain').itervalues().next() -%}
 
 {
   "rabbitmq" : {
-    "host" : "{{ grains['ip_interfaces'][rabbitmq_interface][0] }}",
+    "host" : "{{ grains['ip_interfaces'][interface][0] }}",
     "port" : 5672,
     "user" : "{{ salt['pillar.get']('sensu:server:rabbitmq:user') }}",
     "password" : "{{ salt['pillar.get']('sensu:server:rabbitmq:password') }}",
