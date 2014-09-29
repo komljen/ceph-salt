@@ -4,10 +4,6 @@ Deploy Ceph cluster with SaltStack
 Salt states for Ceph cluster deployment. Currently only Ceph MONs and OSDs are supported.
 Tested on Ubuntu 12.04 with Ceph Firefly release.
 
-TODO:
- - Add Sensu monitoring (in progress)
- - Add Calamari
-
 Test environment with Vagrant
 ==============
 
@@ -50,7 +46,7 @@ Salt states and pillars
 Clone this git repository:
 
     rm -rf /srv/salt /srv/pillar
-    cd /srv && git clone https://github.com/komljen/salt-ceph.git .
+    cd /srv && git clone https://github.com/komljen/ceph-salt.git .
 
 Configuration options
 --------------
