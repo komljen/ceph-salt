@@ -5,4 +5,3 @@ base:
     - environment
     - mine_functions
     - data.ceph
-    - data.sensu
