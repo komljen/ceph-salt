@@ -1,24 +1,25 @@
 nodes:
   master:
     roles:
-      - sensu-server
-      - sensu-client
+      - ceph-client
   ceph-node01:
     roles:
       - ceph-osd
       - ceph-mon
-      - sensu-client
     devs:
-      sdb:
-        journal: sdc
+      sdc:
+        journal: sdb
+      sdd:
+        journal: sdb
   ceph-node02:
     roles:
       - ceph-osd
       - ceph-mon
-      - sensu-client
     devs:
-      sdb:
-        journal: sdc
+      sdc:
+        journal: sdb
+      sdd:
+        journal: sdb
 
 # Examples:
 # MON and OSD on separate nodes.

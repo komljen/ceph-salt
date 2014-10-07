@@ -41,9 +41,9 @@ Vagrant.configure("2") do |config|
     # Additional NIC for cluster network
     node.vm.network :private_network, ip: "192.168.36.20"
 
-    # Add 2 additional 4GB drives
+    # Add 3 additional 4GB drives
     node.vm.provider "virtualbox" do |v|
-      ["1","2"].each do |disk|
+      ["1","2","3"].each do |disk|
         diskname = File.expand_path("~/ceph-node01-#{disk}.vdi")
         v.customize ['createhd', '--filename', diskname, '--size', 4096]
         v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
@@ -66,9 +66,9 @@ Vagrant.configure("2") do |config|
     # Additional NIC for cluster network
     node.vm.network :private_network, ip: "192.168.36.30"
 
-    # Add 2 additional 4GB drives
+    # Add 3 additional 4GB drives
     node.vm.provider "virtualbox" do |v|
-      ["1","2"].each do |disk|
+      ["1","2","3"].each do |disk|
         diskname = File.expand_path("~/ceph-node02-#{disk}.vdi")
         v.customize ['createhd', '--filename', diskname, '--size', 4096]
         v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
