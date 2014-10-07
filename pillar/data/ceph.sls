@@ -7,7 +7,7 @@ ceph:
     rbd_cache: true
     rbd_cache_size: 134217728
   osd:
-    journal_size: 3072
+    journal_size: 512
     pool_default_size: 3
     pool_default_min_size: 1
     pool_default_pg_num: 1024
