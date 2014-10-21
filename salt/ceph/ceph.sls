@@ -1,28 +1,29 @@
 # vi: set ft=yaml.jinja :
 
-{% set cluster = salt['grains.get']('environment','ceph') -%}
+{% import 'ceph/global_vars.jinja' as conf with context -%}
+{% set psls = sls.split('.')[0] -%}
 
-{% if salt['config.get']('oscodename') == 'precise' -%}
-
-ceph_repo:
-  pkgrepo.managed:
-    - name: deb http://ceph.com/debian/ precise main
-    - file: /etc/apt/sources.list.d/ceph.list
-    - key_url: https://raw.github.com/ceph/ceph/master/keys/release.asc
-    - require_in:
-      - pkg: ceph
-
-{% endif -%}
+include:
+  - .repo
 
 ceph:
-  pkg.installed: []
+  pkg.installed:
+    - require:
+      - pkgrepo: ceph_repo
 
-/etc/ceph/{{ cluster }}.conf:
+{{ conf.conf_file }}:
   file.managed:
     - template: jinja
-    - source: salt://ceph/etc/ceph.conf
+    - source: salt://{{ psls }}/etc/ceph/ceph.conf
     - user: root
     - group: root
     - mode: '0644'
     - require:
       - pkg: ceph
+
+cp.push {{ conf.conf_file }}:
+  module.wait:
+    - name: cp.push
+    - path: {{ conf.conf_file }}
+    - watch:
+      - file: {{ conf.conf_file }}
