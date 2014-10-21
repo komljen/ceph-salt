@@ -1,14 +1,16 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "precise64"
-  config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box"
+  config.vm.box = "trusty64"
+  config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
 
-  # Salt master
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+
   config.vm.define "master" do |node|
     node.vm.hostname = "master"
     node.vm.network :private_network, ip: "192.168.33.10"
-    node.vm.network "forwarded_port", guest: 3000, host: 3000
 
     node.vm.synced_folder "../salt/", "/srv/salt"
     node.vm.synced_folder "../pillar/", "/srv/pillar"
@@ -26,16 +28,15 @@ Vagrant.configure("2") do |config|
       salt.minion_pub = 'keys/master.pub'
 
       salt.seed_master = {
-        'ceph-node01' => 'keys/ceph-node01.pub',
-        'ceph-node02' => 'keys/ceph-node02.pub',
+        'node01' => 'keys/node01.pub',
+        'node02' => 'keys/node02.pub',
         'master' => 'keys/master.pub'
       }
     end
   end
 
-  # Salt minion01
-  config.vm.define "ceph-node01" do |node|
-    node.vm.hostname = "ceph-node01"
+  config.vm.define "node01" do |node|
+    node.vm.hostname = "node01"
     node.vm.network :private_network, ip: "192.168.33.20"
 
     # Additional NIC for cluster network
@@ -44,7 +45,7 @@ Vagrant.configure("2") do |config|
     # Add 3 additional 4GB drives
     node.vm.provider "virtualbox" do |v|
       ["1","2","3"].each do |disk|
-        diskname = File.expand_path("~/ceph-node01-#{disk}.vdi")
+        diskname = File.expand_path("~/node01-#{disk}.vdi")
         v.customize ['createhd', '--filename', diskname, '--size', 4096]
         v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
       end
@@ -53,14 +54,13 @@ Vagrant.configure("2") do |config|
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/ceph-node01.pem'
-      salt.minion_pub = 'keys/ceph-node01.pub'
+      salt.minion_key = 'keys/node01.pem'
+      salt.minion_pub = 'keys/node01.pub'
     end
   end
 
-  # Salt minion02
-  config.vm.define "ceph-node02" do |node|
-    node.vm.hostname = "ceph-node02"
+  config.vm.define "node02" do |node|
+    node.vm.hostname = "node02"
     node.vm.network :private_network, ip: "192.168.33.30"
 
     # Additional NIC for cluster network
@@ -69,7 +69,7 @@ Vagrant.configure("2") do |config|
     # Add 3 additional 4GB drives
     node.vm.provider "virtualbox" do |v|
       ["1","2","3"].each do |disk|
-        diskname = File.expand_path("~/ceph-node02-#{disk}.vdi")
+        diskname = File.expand_path("~/node02-#{disk}.vdi")
         v.customize ['createhd', '--filename', diskname, '--size', 4096]
         v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
       end
@@ -78,8 +78,8 @@ Vagrant.configure("2") do |config|
     # salt-minion provisioning
     node.vm.provision :salt do |salt|
       salt.minion_config = "configs/minion"
-      salt.minion_key = 'keys/ceph-node02.pem'
-      salt.minion_pub = 'keys/ceph-node02.pub'
+      salt.minion_key = 'keys/node02.pem'
+      salt.minion_pub = 'keys/node02.pub'
     end
   end
 end
