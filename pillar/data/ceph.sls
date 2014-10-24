@@ -9,14 +9,14 @@ ceph:
     rbd_cache_size: 134217728
   osd:
     crush_chooseleaf_type: 1
-    crush_update_on_start: true
+    crush_update_on_start: "true"
     filestore_merge_threshold: 40
     filestore_split_multiple: 8
     journal_size: 512
     op_threads: 8
     pool_default_min_size: 1
-    pool_default_pg_num: 1024
-    pool_default_pgp_num: 1024
+    pool_default_pg_num: 128
+    pool_default_pgp_num: 128
     pool_default_size: 3
   mon:
     interface: eth1
