@@ -3,5 +3,5 @@
 base:
   '*':
     - environment
-    - mine_functions
+    - mine
     - data.ceph
