@@ -74,6 +74,7 @@ Environment description file with examples is located here: pillar/environment.s
 Ceph configuration file will be automatically generated. Edit pillar/data/ceph.sls if you want to make additional changes:
 
     ceph:
+      version: firefly
       cluster_name: ceph
       global:
         cluster_network: 192.168.36.0/24
