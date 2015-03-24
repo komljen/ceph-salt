@@ -12,11 +12,17 @@ ceph:
   osd:
     crush_chooseleaf_type: 1
     crush_update_on_start: "true"
-    filestore_merge_threshold: 40
-    filestore_split_multiple: 8
-    filestore_op_threads: 4
+    filestore_merge_threshold: 10
+    filestore_split_multiple: 2
+    filestore_op_threads: 2
+    filestore_max_sync_interval: 5
+    filestore_min_sync_interval: "0.01"
+    filestore_queue_max_ops: 500
+    filestore_queue_max_bytes: 104857600
+    filestore_queue_committing_max_ops: 500
+    filestore_queue_committing_max_bytes: 104857600
     journal_size: 512
-    op_threads: 4
+    op_threads: 1
     disk_threads: 1
     scrub_load_threshold: "0.5"
     map_cache_size: 512
