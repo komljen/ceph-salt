@@ -7,7 +7,7 @@ ceph:
     public_network: 192.168.33.0/24
   client:
     rbd_cache: "true"
-    rbd_cache_writethrough_until_flash: "true"
+    rbd_cache_writethrough_until_flush: "true"
     rbd_cache_size: 134217728
   osd:
     crush_chooseleaf_type: 1
