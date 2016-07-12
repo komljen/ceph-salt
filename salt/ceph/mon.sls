@@ -13,6 +13,10 @@ include:
     - name: echo "Getting admin keyring"
     - unless: test -f {{ conf.admin_keyring }}
 
+random_wait:
+  cmd.run:
+    - name: 'sleep $(( ( RANDOM % 7 ) + 2 ))'
+
 {% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain') -%}
 
 cp.get_file {{ mon }}{{ conf.admin_keyring }}:

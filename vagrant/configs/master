@@ -3,3 +3,4 @@ file_roots:
   base:
     - /srv/salt
     - /var/cache/salt/master/minions
+worker_threads: 1

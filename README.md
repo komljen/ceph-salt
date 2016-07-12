@@ -3,7 +3,7 @@ Deploy Ceph cluster with SaltStack
 
 Salt states for Ceph cluster deployment. Currently only Ceph MONs and OSDs are supported.
 
-Tested on Ubuntu 14.04 with Ceph Firefly release.
+Tested on Ubuntu 14.04 with Ceph Hammer release.
 
 Test environment with Vagrant
 ==============
@@ -33,14 +33,14 @@ On the master node you need to include additional options. Add ```vagrant/config
 
 New options will make sure that minions can send files to the master and other minions to be able to get those files. Salt master restart is required:
 ```
-service salt-master restart
+sudo service salt-master restart
 ```
 Salt states and pillars
 --------------
 
 Clone this git repository:
 ```
-rm -rf /srv/salt /srv/pillar
+sudo rm -rf /srv/salt /srv/pillar
 cd /srv && git clone https://github.com/komljen/ceph-salt.git .
 ```
 Configuration options
@@ -74,7 +74,7 @@ nodes:
 Ceph configuration file will be automatically generated. Edit ```pillar/data/ceph.sls``` if you want to make additional changes:
 ```
 ceph:
-  version: firefly
+  version: hammer
   cluster_name: ceph
   global:
     cluster_network: 192.168.36.0/24
@@ -122,13 +122,13 @@ Deployment
 
 First you need to run highstate to add roles to minions based on environment.sls file:
 ```
-salt '*' state.highstate
+sudo salt '*' state.highstate
 ```
 To start Ceph cluster deployment run orchestrate state from Salt master:
 ```
-salt-run -l debug state.orchestrate orchestrate.ceph
+sudo salt-run state.orchestrate orchestrate.ceph
 ``` 
 It will take few minutes to complete. Then you can check ceph cluster status from master:
 ```
-salt 'node01' cmd.run 'ceph -s'
+sudo ceph -s
 ```

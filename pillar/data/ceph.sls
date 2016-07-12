@@ -1,5 +1,5 @@
 ceph:
-  version: firefly
+  version: hammer
   cluster_name: ceph
   global:
     cluster_network: 192.168.36.0/24

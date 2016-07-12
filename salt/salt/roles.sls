@@ -7,5 +7,3 @@ include:
   file.managed:
     - template: jinja
     - source: salt://salt/etc/grains
-    - require:
-      - pkg: salt-minion
