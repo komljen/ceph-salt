@@ -52,7 +52,7 @@ Vagrant.configure("2") do |config|
       ["1","2","3"].each do |disk|
         diskname = File.expand_path("~/node01-#{disk}.vdi")
         v.customize ['createhd', '--filename', diskname, '--size', 4096] unless File.exist?(diskname)
-        v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+        v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
       end
     end
 
@@ -78,7 +78,7 @@ Vagrant.configure("2") do |config|
       ["1","2","3"].each do |disk|
         diskname = File.expand_path("~/node02-#{disk}.vdi")
         v.customize ['createhd', '--filename', diskname, '--size', 4096] unless File.exist?(diskname)
-        v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
+        v.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', disk, '--device', 0, '--type', 'hdd', '--medium', diskname]
       end
     end
 
