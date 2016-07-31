@@ -1,3 +1,9 @@
+Ceph consulting
+=========
+
+I'm providing Ceph consulting services including architecture design and implementation.
+Please contact me for more info.
+
 Deploy Ceph cluster with SaltStack
 =========
 
