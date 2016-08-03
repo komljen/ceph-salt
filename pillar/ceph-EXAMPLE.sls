@@ -1,6 +1,8 @@
 ceph:
   version: hammer
   cluster_name: ceph
+  rest_api:
+    port: 5000
   global:
     cluster_network: 192.168.36.0/24
     fsid: 294bc494-81ba-4c3c-ac5d-af7b3442a2a5
@@ -9,6 +11,8 @@ ceph:
     rbd_cache: "true"
     rbd_cache_writethrough_until_flush: "true"
     rbd_cache_size: 134217728
+    admin_socket: /var/run/ceph/rbd-$pid-$cctid.asok
+    log_file: /var/log/ceph/rbd.log
   osd:
     crush_chooseleaf_type: 1
     crush_update_on_start: "true"

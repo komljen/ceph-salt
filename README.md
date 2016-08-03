@@ -9,7 +9,7 @@ Deploy Ceph cluster with SaltStack
 
 Salt states for Ceph cluster deployment. Currently only Ceph MONs and OSDs are supported.
 
-Tested on Ubuntu 14.04 with Ceph Hammer release.
+Tested on Ubuntu 14.04 with Ceph Hammer release and Salt v2016.3.1.
 
 Test environment with Vagrant
 ==============
@@ -57,12 +57,19 @@ Environment description file with examples is located here: ```pillar/environmen
 nodes:
   master:
     roles:
+      - ceph-osd
       - ceph-mon
+      - ceph-rest-api
+    osds:
+      sdc:
+        journal: sdb
+      sdd:
+        journal: sdb
   node01:
     roles:
       - ceph-osd
       - ceph-mon
-    devs:
+    osds:
       sdc:
         journal: sdb
       sdd:
@@ -71,7 +78,7 @@ nodes:
     roles:
       - ceph-osd
       - ceph-mon
-    devs:
+    osds:
       sdc:
         journal: sdb
       sdd:
@@ -132,7 +139,7 @@ sudo salt '*' state.highstate
 ```
 To start Ceph cluster deployment run orchestrate state from Salt master:
 ```
-sudo salt-run state.orchestrate orchestrate.ceph
+sudo salt-run state.orchestrate deploy.ceph pillar='{environment: ENV_NAME}'
 ``` 
 It will take few minutes to complete. Then you can check ceph cluster status from master:
 ```

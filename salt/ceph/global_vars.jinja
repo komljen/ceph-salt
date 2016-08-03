@@ -5,5 +5,6 @@
 {% set admin_keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' -%}
 {% set bootstrap_osd_keyring = '/var/lib/ceph/bootstrap-osd/' + cluster + '.keyring' -%}
 {% set host = salt['config.get']('host') -%}
+{% set environment = salt['grains.get']('environment') -%}
 {% set mon_interface = salt['pillar.get']('ceph:mon:interface') -%}
 {% set fsid = salt['pillar.get']('ceph:global:fsid') -%}

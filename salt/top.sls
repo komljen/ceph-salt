@@ -2,4 +2,4 @@
 
 base:
   '*':
-    - salt.roles
+    - salt.grains

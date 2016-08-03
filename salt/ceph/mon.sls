@@ -119,4 +119,5 @@ cp.push {{ conf.bootstrap_osd_keyring }}:
       - cmd: osd_keyring_wait
 
 /var/lib/ceph/mon/{{ conf.cluster }}-{{ conf.host }}/upstart:
-  file.touch: []
+  file.touch:
+    - unless: test -f /var/lib/ceph/mon/{{ conf.cluster }}-{{ conf.host }}/upstart

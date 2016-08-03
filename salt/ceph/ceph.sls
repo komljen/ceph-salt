@@ -27,3 +27,14 @@ cp.push {{ conf.conf_file }}:
     - path: {{ conf.conf_file }}
     - watch:
       - file: {{ conf.conf_file }}
+
+/etc/updatedb.conf:
+  file.replace:
+    - pattern: (^PRUNEPATHS.*)(\")
+    - repl: \1 /var/lib/ceph"
+    - unless: grep -q "PRUNEPATHS.*/var/lib/ceph" /etc/updatedb.conf
+
+updatedb:
+  cmd.wait:
+    - watch:
+      - file: /etc/updatedb.conf

@@ -1,6 +1,11 @@
 file_recv: True
 file_roots:
   base:
-    - /srv/salt
+    - /home/USER/ceph-salt/salt
     - /var/cache/salt/master/minions
+pillar_roots:
+  base:
+    - /home/USER/config
+    - /home/USER/ceph-salt/pillar
 worker_threads: 1
+hash_type: sha256

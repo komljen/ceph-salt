@@ -22,24 +22,17 @@ cp.get_file {{ mon }}{{ conf.bootstrap_osd_keyring }}:
 
 {% endfor -%}
 
-{% for dev in salt['pillar.get']('nodes:' + conf.host + ':devs') -%}
-{% if dev -%}
-{% set journal = salt['pillar.get']('nodes:' + conf.host + ':devs:' + dev + ':journal') -%}
+{% for osd in salt['pillar.get']('nodes:' + conf.host + ':osds') -%}
+{% if osd -%}
+{% set journal = salt['pillar.get']('nodes:' + conf.host + ':osds:' + osd + ':journal') -%}
 
-disk_prepare {{ dev }}:
+disk_prepare {{ osd }}:
   cmd.run:
     - name: |
         ceph-disk prepare --cluster {{ conf.cluster }} \
                           --cluster-uuid {{ conf.fsid }} \
-                          --fs-type xfs /dev/{{ dev }} /dev/{{ journal }}
-    - unless: parted --script /dev/{{ dev }} print | grep 'ceph data'
-
-disk_activate {{ dev }}1:
-  cmd.run:
-    - name: ceph-disk activate /dev/{{ dev }}1
-    - onlyif: test -f {{ conf.bootstrap_osd_keyring }}
-    - unless: ceph-disk list | egrep "/dev/{{ dev }}1.*active"
-    - timeout: 10
+                          --fs-type xfs /dev/{{ osd }} /dev/{{ journal }}
+    - unless: parted --script /dev/{{ osd }} print | grep 'ceph data'
 
 {% endif -%}
 {% endfor -%}

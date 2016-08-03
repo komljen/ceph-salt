@@ -2,6 +2,9 @@
 
 base:
   '*':
-    - environment
-    - mine
-    - data.ceph
+    - mine_functions
+
+  'environment:ENV_NAME':
+    - match: grain
+    - environment-ENV_NAME
+    - ceph-ENV_NAME

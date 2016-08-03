@@ -13,7 +13,6 @@ ceph-common:
 {{ conf.conf_file }}:
   cmd.run:
     - name: echo "Getting ceph configuration file:"
-    - unless: test -f {{ conf.conf_file }}
 
 {% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain') -%}
 
@@ -43,4 +42,12 @@ cp.get_file {{ mon }}{{ conf.admin_keyring }}:
       - cmd: {{ conf.admin_keyring }}
 
 {% endfor -%}
+
+/var/log/ceph:
+  file.directory:
+    - makedirs: True
+
+/var/run/ceph:
+  file.directory:
+    - makedirs: True
 

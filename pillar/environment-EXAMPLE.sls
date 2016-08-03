@@ -1,12 +1,19 @@
 nodes:
   master:
     roles:
+      - ceph-osd
       - ceph-mon
+      - ceph-rest-api
+    osds:
+      sdc:
+        journal: sdb
+      sdd:
+        journal: sdb
   node01:
     roles:
       - ceph-osd
       - ceph-mon
-    devs:
+    osds:
       sdc:
         journal: sdb
       sdd:
@@ -15,7 +22,7 @@ nodes:
     roles:
       - ceph-osd
       - ceph-mon
-    devs:
+    osds:
       sdc:
         journal: sdb
       sdd:
