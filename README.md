@@ -9,7 +9,7 @@ Deploy Ceph cluster with SaltStack
 
 Salt states for Ceph cluster deployment. Currently only Ceph MONs and OSDs are supported.
 
-Tested on Ubuntu 14.04 with Ceph Hammer release and Salt v2016.3.1.
+Tested on Ubuntu 14.04 with Ceph Hammer release and Salt v2016.3.2.
 
 Test environment with Vagrant
 ==============
