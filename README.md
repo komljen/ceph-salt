@@ -1,9 +1,3 @@
-Ceph consulting
-=========
-
-I'm providing Ceph consulting services including architecture design and implementation.
-Please contact me for more details.
-
 Deploy Ceph cluster with SaltStack
 =========
 
@@ -145,3 +139,8 @@ It will take few minutes to complete. Then you can check ceph cluster status fro
 ```
 sudo ceph -s
 ```
+Ceph consulting
+=========
+
+I'm providing Ceph consulting services including architecture design and implementation.
+Please contact me for more details.
