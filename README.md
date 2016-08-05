@@ -8,8 +8,8 @@ Support for:
  * OSDs
  * Ceph REST API
 
- Details:
-
+Details:
+ 
  * Support for Ceph multi-environment deployment from one salt master node.
  * Deploy any number of MONs or OSDs. Also, those states could be used to add new nodes after a cluster is created.
  * Support to select which disks are OSDs or Journals.
