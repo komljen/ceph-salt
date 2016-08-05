@@ -1,52 +1,149 @@
-Deploy Ceph cluster with SaltStack
-=========
+# Ceph cluster deployment
 
-Salt states for Ceph cluster deployment. Currently only Ceph MONs and OSDs are supported.
+Salt states for Ceph cluster deployment.
 
-Tested on Ubuntu 14.04 with Ceph Hammer release and Salt v2016.3.2.
+Support for:
 
-Test environment with Vagrant
-==============
+ * MONs
+ * OSDs
+ * Ceph REST API
+
+ Details:
+
+ * Support for Ceph multi-environment deployment from one salt master node.
+ * Deploy any number of MONs or OSDs. Also, those states could be used to add new nodes after a cluster is created.
+ * Support to select which disks are OSDs or Journals.
+ * Support for cluster and public network.
+
+Those states are tested on Ubuntu 14.04 with Ceph Hammer release and Salt v2016.3.2.
+
+# Vagrant
 
 If you want to test this deployment on your local machine inside VMs, the easiest way is to use Vagrant with VirtualBox provider. All you need is to go inside vagrant directory and run:
+
 ```
 cd vagrant && vagrant up
 ```
-This will bring up 3 VMs, one master and 3 minion nodes. Ceph will be deployed on two minion nodes. Also those VMs will have two additional network interfaces to emulate public and cluster network for Ceph and two additional HDDs attached to them. One will be used for OSD and one for journal. Environment description is located here: ```pillar/environment.sls```
+This will bring up 3 VMs, one master, and 3 minion nodes. Ceph will be deployed on all three nodes. Also, those VMs will have two additional network interfaces to emulate public and cluster network for Ceph and three additional drives attached to them. Two will be used for OSDs and one for a journal.
 
 Test the connectivity between master and minions:
+
 ```
 vagrant ssh master
-sudo salt '*' test.ping
-``` 
-If everything is OK you can proceed with Ceph deployment step: https://github.com/komljen/ceph-salt#deployment
+sudo salt -G 'environment:VAGRANT' test.ping
+```
+If everything is OK you can proceed with the Ceph deployment step: https://github.com/komljen/ceph-salt#deployment
 
-Prepare your environment
-==============
+# Local environment
 
-First you need Salt master and minions installed and running on all nodes and minions keys should be accepted.
+First, you need Salt master and minions installed and running on all nodes and minions keys should be accepted. The easiest way to install SaltStack is using bootstrap script:
 
-Master node
---------------
+Master:
 
-On the master node you need to include additional options. Add ```vagrant/configs/master``` file to ```/etc/salt/master.d/``` directory.
+```
+curl -L https://bootstrap.saltstack.com | sudo sh -s -- -M -g https://github.com/saltstack/salt.git git v2016.3.2
+```
+Minions:
 
-New options will make sure that minions can send files to the master and other minions to be able to get those files. Salt master restart is required:
+```
+curl -L https://bootstrap.saltstack.com | sudo sh -s -- -g https://github.com/saltstack/salt.git git v2016.3.2
+```
+
+### Master configuration
+
+On the master node you need to include additional options. Edit master config file ```/etc/salt/master```. Replace ```<USER>``` with username where this repository will be cloned:
+
+```
+file_recv: True
+file_roots:
+  base:
+    - /home/<USER>/ceph-salt/salt
+    - /var/cache/salt/master/minions
+pillar_roots:
+  base:
+    - /home/<USER>/config
+    - /home/<USER>/ceph-salt/pillar
+worker_threads: 10
+hash_type: sha256
+```
+
+New options will make sure that minions can send files to the master and other minions to be able to get those files. Also here you can change where your salt states and config files are located. Salt master restart is required:
+
 ```
 sudo service salt-master restart
 ```
-Salt states and pillars
---------------
 
-Clone this git repository:
-```
-sudo rm -rf /srv/salt /srv/pillar
-cd /srv && git clone https://github.com/komljen/ceph-salt.git .
-```
-Configuration options
---------------
+### Minions configuration
 
-Environment description file with examples is located here: ```pillar/environment.sls```. Edit this file to match with your environment:
+On all minion nodes, you need to edit the configuration file. Edit minion config file ```/etc/salt/minion```. Replace ```<ENV_NAME>``` and master IP address to match with your environment:
+
+```
+master: 192.168.33.10
+hash_type: sha256
+grains:
+  environment: <ENV_NAME>
+```
+
+Salt minion restart is required:
+
+```
+sudo service salt-minion restart
+```
+
+**NOTE:** To add new Ceph environment just install minions and choose new environment name!
+
+### Connection check
+
+On master node accept all minions with:
+
+```
+sudo salt-key -A
+```
+Now all minions are connected and you should be able to send any command to a particular environment. Examples:
+
+```
+sudo salt -G 'environment:PROD' test.ping
+sudo salt -G 'environment:STAGE' test.ping
+```
+If everything is fine clone this git repository on the master node. Use the same user you specified in master configuration file:
+
+```
+git clone https://github.com/komljen/ceph-salt.git -b master
+```
+Copy configuration files for each environment except ```top.sls``` file:
+
+```
+mkdir -p ~/config
+cp ~/ceph-salt/pillar/environment-EXAMPLE.sls ~/config/environment-<ENV_NAME>.sls
+cp ~/ceph-salt/pillar/ceph-EXAMPLE.sls ~/config/ceph-<ENV_NAME>.sls
+cp ~/ceph-salt/pillar/top.sls ~/config/top.sls
+```
+Edit ```~/config/top.sls``` file and replace ENV_NAME with your environment:
+
+```
+  'environment:<ENV_NAME>':
+    - match: grain
+    - environment-<ENV_NAME>
+    - ceph-<ENV_NAME>
+```
+If you have more environments add it here. Example:
+
+```
+  'environment:PROD':
+    - match: grain
+    - environment-PROD
+    - ceph-PROD
+
+  'environment:STAGE':
+    - match: grain
+    - environment-STAGE
+    - ceph-STAGE
+```
+
+### Configuration options
+
+Edit ```~/config/environment-<ENV_NAME>.sls``` file to match with your environment. For node names use hostnames (not FQDN):
+
 ```
 nodes:
   master:
@@ -78,69 +175,44 @@ nodes:
       sdd:
         journal: sdb
 ```
-Ceph configuration file will be automatically generated. Edit ```pillar/data/ceph.sls``` if you want to make additional changes:
+Now edit ```~/config/ceph-<ENV_NAME>.sls``` if you want to make additional changes to ceph configuration. Take a look at those options to match with your machines:
+
 ```
 ceph:
   version: hammer
   cluster_name: ceph
+  rest_api:
+    port: 5000
   global:
     cluster_network: 192.168.36.0/24
     fsid: 294bc494-81ba-4c3c-ac5d-af7b3442a2a5
     public_network: 192.168.33.0/24
-  client:
-    rbd_cache: "true"
-    rbd_cache_writethrough_until_flash: "true"
-    rbd_cache_size: 134217728
-  osd:
-    crush_chooseleaf_type: 1
-    crush_update_on_start: "true"
-    filestore_merge_threshold: 10
-    filestore_split_multiple: 2
-    filestore_op_threads: 2
-    filestore_max_sync_interval: 5
-    filestore_min_sync_interval: "0.01"
-    filestore_queue_max_ops: 500
-    filestore_queue_max_bytes: 104857600
-    filestore_queue_committing_max_ops: 500
-    filestore_queue_committing_max_bytes: 104857600
-    journal_size: 512
-    op_threads: 1
-    disk_threads: 1
-    scrub_load_threshold: "0.5"
-    map_cache_size: 512
-    max_backfills: 2
-    pool_default_min_size: 1
-    pool_default_pg_num: 128
-    pool_default_pgp_num: 128
-    pool_default_size: 3
   mon:
-    interface: eth1
+    interface: eth1 # Should match public_network
 ```
-Take a look at those options to match with your machines:
-```
-public_network: 192.168.33.0/24
-cluster_network: 192.168.36.0/24
-interface: eth1
-```
-Proceed with deployment step after changes are done.
+Proceed with deployment step after all changes are done.
 
-Deployment
-==============
+**NOTE:** Generate your FSID with ```uuidgen``` command!
 
-First you need to run highstate to add roles to minions based on environment.sls file:
+# Deployment
+
+First, you need to run high state to add roles to minions based on ```environment-<ENV_NAME>.sls``` file. All roles for all environments will be applied:
+
 ```
 sudo salt '*' state.highstate
 ```
-To start Ceph cluster deployment run orchestrate state from Salt master:
+To start Ceph cluster deployment run orchestrate state:
+
 ```
 sudo salt-run state.orchestrate deploy.ceph pillar='{environment: ENV_NAME}'
-``` 
-It will take few minutes to complete. Then you can check ceph cluster status from master:
+```
+It will take few minutes to complete. Then you can check ceph cluster status:
+
 ```
 sudo ceph -s
 ```
-Ceph consulting
-=========
+
+# Ceph consulting
 
 I'm providing Ceph consulting services including architecture design and implementation.
 Please contact me for more details.
