@@ -13,7 +13,7 @@ Support for:
 Details:
 
  * Support for Ceph multi-environment deployment from one salt master node.
- * Deploy any number of MONs or OSDs. Also, those states could be used to add new nodes after a cluster is created.
+ * Deploy any number of MONs, OSDs or MDS services. Also, those states could be used to add new nodes after a cluster is created.
  * Support to select which disks are OSDs or Journals.
  * Support for cluster and public network.
 
