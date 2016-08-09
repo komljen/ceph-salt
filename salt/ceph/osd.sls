@@ -1,24 +1,25 @@
 # vi: set ft=yaml.jinja :
 
 {% import 'ceph/global_vars.jinja' as conf with context -%}
+{% set bootstrap_osd_keyring = '/var/lib/ceph/bootstrap-osd/' + conf.cluster + '.keyring' -%}
 
 include:
   - .ceph
 
-{{ conf.bootstrap_osd_keyring }}:
+{{ bootstrap_osd_keyring }}:
   cmd.run:
     - name: echo "Getting bootstrap OSD keyring"
-    - unless: test -f {{ conf.bootstrap_osd_keyring }}
+    - unless: test -f {{ bootstrap_osd_keyring }}
 
 {% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain') -%}
 
-cp.get_file {{ mon }}{{ conf.bootstrap_osd_keyring }}:
+cp.get_file {{ mon }}{{ bootstrap_osd_keyring }}:
   module.wait:
     - name: cp.get_file
-    - path: salt://{{ mon }}/files{{ conf.bootstrap_osd_keyring }}
-    - dest: {{ conf.bootstrap_osd_keyring }}
+    - path: salt://{{ mon }}/files{{ bootstrap_osd_keyring }}
+    - dest: {{ bootstrap_osd_keyring }}
     - watch:
-      - cmd: {{ conf.bootstrap_osd_keyring }}
+      - cmd: {{ bootstrap_osd_keyring }}
 
 {% endfor -%}
 

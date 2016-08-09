@@ -104,19 +104,24 @@ start_mon:
     - require:
       - cmd: populate_mon
 
-osd_keyring_wait:
+bootstrap_keyring_wait:
   cmd.wait:
-    - name: while ! test -f {{ conf.bootstrap_osd_keyring }}; do sleep 1; done
+    - name: |
+        while [[ $(ls -1 /var/lib/ceph/bootstrap-* | grep {{ conf.cluster }}.keyring | wc -l) != 3 ]]; do sleep 0.2; done
     - timeout: 30
     - watch:
       - cmd: start_mon
 
-cp.push {{ conf.bootstrap_osd_keyring }}:
+{% for service in 'osd','mds','rgw' -%}
+
+cp.push /var/lib/ceph/bootstrap-{{ service }}/{{ conf.cluster }}.keyring:
   module.wait:
     - name: cp.push
-    - path: {{ conf.bootstrap_osd_keyring }}
+    - path: /var/lib/ceph/bootstrap-{{ service }}/{{ conf.cluster }}.keyring
     - watch:
-      - cmd: osd_keyring_wait
+      - cmd: bootstrap_keyring_wait
+
+{% endfor -%}
 
 /var/lib/ceph/mon/{{ conf.cluster }}-{{ conf.host }}/upstart:
   file.touch:

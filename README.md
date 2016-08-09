@@ -4,12 +4,14 @@ Salt states for Ceph cluster deployment.
 
 Support for:
 
- * MONs
- * OSDs
+ * Ceph MON
+ * Ceph OSD
+ * Ceph MDS
+ * Ceph Clients
  * Ceph REST API
 
 Details:
- 
+
  * Support for Ceph multi-environment deployment from one salt master node.
  * Deploy any number of MONs or OSDs. Also, those states could be used to add new nodes after a cluster is created.
  * Support to select which disks are OSDs or Journals.
@@ -150,6 +152,8 @@ nodes:
     roles:
       - ceph-osd
       - ceph-mon
+      - ceph-mds
+      - ceph-client
       - ceph-rest-api
     osds:
       sdc:
@@ -160,6 +164,7 @@ nodes:
     roles:
       - ceph-osd
       - ceph-mon
+      - ceph-mds
     osds:
       sdc:
         journal: sdb
@@ -169,6 +174,7 @@ nodes:
     roles:
       - ceph-osd
       - ceph-mon
+      - ceph-mds
     osds:
       sdc:
         journal: sdb

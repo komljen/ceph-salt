@@ -3,6 +3,8 @@ nodes:
     roles:
       - ceph-osd
       - ceph-mon
+      - ceph-mds
+      - ceph-client
       - ceph-rest-api
     osds:
       sdc:
@@ -13,6 +15,7 @@ nodes:
     roles:
       - ceph-osd
       - ceph-mon
+      - ceph-mds
     osds:
       sdc:
         journal: sdb
@@ -22,6 +25,7 @@ nodes:
     roles:
       - ceph-osd
       - ceph-mon
+      - ceph-mds
     osds:
       sdc:
         journal: sdb

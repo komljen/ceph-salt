@@ -19,6 +19,16 @@ osd_setup:
     - pillar:
         environment: {{ environment }}
 
+mds_setup:
+  salt.state:
+    - tgt: 'G@roles:ceph-mds and G@environment:{{ environment }}'
+    - tgt_type: compound
+    - sls: ceph.mds
+    - require:
+      - salt: mon_setup
+    - pillar:
+        environment: {{ environment }}
+
 client_setup:
   salt.state:
     - tgt: 'G@roles:ceph-client and G@environment:{{ environment }}'
