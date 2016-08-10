@@ -1,7 +1,6 @@
 # vi: set ft=yaml.jinja :
-
-{% import 'ceph/global_vars.jinja' as conf with context -%}
-{% set psls = sls.split('.')[0] -%}
+{% import 'ceph/global_vars.jinja' as conf with context %}
+{% set psls = sls.split('.')[0] %}
 
 include:
   - .client

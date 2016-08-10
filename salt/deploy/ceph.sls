@@ -1,5 +1,5 @@
 # vi: set ft=yaml.jinja :
-{% set environment = salt['pillar.get']('environment') -%}
+{% set environment = salt['pillar.get']('environment') %}
 
 mon_setup:
   salt.state:

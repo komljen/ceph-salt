@@ -9,3 +9,5 @@ pillar_roots:
     - /home/USER/ceph-salt/pillar
 worker_threads: 1
 hash_type: sha256
+jinja_trim_blocks: True
+jinja_lstrip_blocks: True

@@ -1,9 +1,8 @@
 # vi: set ft=yaml.jinja :
-
-{% import 'ceph/global_vars.jinja' as conf with context -%}
-{% set ip = salt['network.ip_addrs'](conf.mon_interface)[0] -%}
-{% set secret = '/var/lib/ceph/tmp/' + conf.cluster + '.mon.keyring' -%}
-{% set monmap = '/var/lib/ceph/tmp/' + conf.cluster + 'monmap' -%}
+{% import 'ceph/global_vars.jinja' as conf with context %}
+{% set ip = salt['network.ip_addrs'](conf.mon_interface)[0] %}
+{% set secret = '/var/lib/ceph/tmp/' + conf.cluster + '.mon.keyring' %}
+{% set monmap = '/var/lib/ceph/tmp/' + conf.cluster + 'monmap' %}
 
 include:
   - .ceph
@@ -17,8 +16,7 @@ random_wait:
   cmd.run:
     - name: 'sleep $(( ( RANDOM % 7 ) + 2 ))'
 
-{% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain') -%}
-
+{% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain') %}
 cp.get_file {{ mon }}{{ conf.admin_keyring }}:
   module.wait:
     - name: cp.get_file
@@ -26,8 +24,7 @@ cp.get_file {{ mon }}{{ conf.admin_keyring }}:
     - dest: {{ conf.admin_keyring }}
     - watch:
       - cmd: {{ conf.admin_keyring }}
-
-{% endfor -%}
+{% endfor %}
 
 get_mon_secret:
   cmd.run:
@@ -112,16 +109,14 @@ bootstrap_keyring_wait:
     - watch:
       - cmd: start_mon
 
-{% for service in 'osd','mds','rgw' -%}
-
+{% for service in 'osd','mds','rgw' %}
 cp.push /var/lib/ceph/bootstrap-{{ service }}/{{ conf.cluster }}.keyring:
   module.wait:
     - name: cp.push
     - path: /var/lib/ceph/bootstrap-{{ service }}/{{ conf.cluster }}.keyring
     - watch:
       - cmd: bootstrap_keyring_wait
-
-{% endfor -%}
+{% endfor %}
 
 /var/lib/ceph/mon/{{ conf.cluster }}-{{ conf.host }}/upstart:
   file.touch:

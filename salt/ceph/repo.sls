@@ -1,7 +1,6 @@
 # vi: set ft=yaml.jinja :
-
-{% set oscodename = salt['config.get']('oscodename') -%}
-{% set version = salt['pillar.get']('ceph:version') -%}
+{% set oscodename = salt['config.get']('oscodename') %}
+{% set version = salt['pillar.get']('ceph:version') %}
 
 ceph_repo:
   pkgrepo.managed:

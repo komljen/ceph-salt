@@ -1,5 +1,4 @@
-{% import 'ceph/global_vars.jinja' as conf with context -%}
-
+{% import 'ceph/global_vars.jinja' as conf with context %}
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          ceph-rest-api
@@ -92,4 +91,3 @@ case "$1" in
         exit 3
         ;;
 esac
-

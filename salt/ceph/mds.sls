@@ -1,7 +1,6 @@
 # vi: set ft=yaml.jinja :
-
-{% import 'ceph/global_vars.jinja' as conf with context -%}
-{% set bootstrap_mds_keyring = '/var/lib/ceph/bootstrap-mds/' + conf.cluster + '.keyring' -%}
+{% import 'ceph/global_vars.jinja' as conf with context %}
+{% set bootstrap_mds_keyring = '/var/lib/ceph/bootstrap-mds/' + conf.cluster + '.keyring' %}
 
 include:
   - .ceph
@@ -11,8 +10,7 @@ include:
     - name: echo "Getting bootstrap MDS keyring"
     - unless: test -f {{ bootstrap_mds_keyring }}
 
-{% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain') -%}
-
+{% for mon in salt['mine.get']('roles:ceph-mon','grains.items','grain') %}
 cp.get_file {{ mon }}{{ bootstrap_mds_keyring }}:
   module.wait:
     - name: cp.get_file
@@ -20,8 +18,7 @@ cp.get_file {{ mon }}{{ bootstrap_mds_keyring }}:
     - dest: {{ bootstrap_mds_keyring }}
     - watch:
       - cmd: {{ bootstrap_mds_keyring }}
-
-{% endfor -%}
+{% endfor %}
 
 /var/lib/ceph/mds/{{ conf.cluster }}-{{ conf.host }}:
   file.directory:
