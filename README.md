@@ -67,6 +67,8 @@ pillar_roots:
     - /home/<USER>/ceph-salt/pillar
 worker_threads: 10
 hash_type: sha256
+jinja_trim_blocks: True
+jinja_lstrip_blocks: True
 ```
 
 New options will make sure that minions can send files to the master and other minions to be able to get those files. Also here you can change where your salt states and config files are located. Salt master restart is required:
