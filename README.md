@@ -220,8 +220,3 @@ It will take few minutes to complete. Then you can check ceph cluster status:
 ```
 sudo ceph -s
 ```
-
-# Ceph consulting
-
-I'm providing Ceph consulting services including architecture design and implementation.
-Please contact me for more details.
