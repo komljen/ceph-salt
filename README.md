@@ -1,5 +1,4 @@
 # Ceph cluster deployment
-[![Flattr this git repo](https://img.shields.io/badge/donate-flattr-red.svg)](https://flattr.com/submit/auto?user_id=komljen&url=https://github.com/komljen/ceph-salt&title=Ceph cluster deployment with SaltStack&language=&tags=github&category=software)
 
 Salt states for Ceph cluster deployment.
 
